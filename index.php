@@ -1,32 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Library Management Dashboard</title>
+    <title>Library Dashboard</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
             text-align: center;
+            background-color: #f5f5f5;
             margin: 0;
             padding: 0;
         }
 
         nav {
-            background: #007bff;
+            background-color: #007bff;
+            padding: 12px 0;
             color: white;
-            padding: 15px 20px;
             font-size: 20px;
             font-weight: bold;
-            text-align: left;
         }
 
-        h1 {
-            margin-top: 50px;
-            font-size: 28px;
-        }
-
-        .button-container {
-            margin-top: 30px;
+        h2 {
+            margin-top: 40px;
+            font-size: 26px;
         }
 
         .dashboard-btn {
@@ -40,19 +35,48 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            transition: background 0.3s ease;
             text-decoration: none;
+            transition: transform 0.2s ease, background 0.3s ease;
         }
 
         .dashboard-btn:hover {
             background-color: #0056b3;
+            transform: scale(1.03);
         }
 
         footer {
             margin-top: 50px;
-            padding: 20px;
-            font-size: 13px;
-            color: #777;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Dark mode */
+        .dark-mode {
+            background-color: #121212;
+            color: #eee;
+        }
+
+        .dark-mode .dashboard-btn {
+            background-color: #444;
+            color: white;
+        }
+
+        .dark-mode nav {
+            background-color: #222;
+        }
+
+        .dark-toggle {
+            background-color: #333;
+            color: #fff;
+            padding: 8px 16px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .dark-toggle:hover {
+            background-color: #222;
         }
     </style>
 </head>
@@ -62,19 +86,25 @@
         📚 Library Management System
     </nav>
 
-    <h1>📘 Library Management Dashboard</h1>
+    <h2>📘 Library Management Dashboard</h2>
 
-    <div class="button-container">
-        <a href="add_book.php" class="dashboard-btn">➕ Add Book</a>
-        <a href="view_books.php" class="dashboard-btn">📖 View Books</a>
-        <a href="issue_book.php" class="dashboard-btn">📦 Issue Book</a>
-        <a href="return_book.php" class="dashboard-btn">📬 Return Book</a>
-        <a href="view_issued_books.php" class="dashboard-btn">🗂️ View Issued Logs</a>
-    </div>
+    <a class="dashboard-btn" href="add_book.php">➕ Add Book</a>
+    <a class="dashboard-btn" href="view_books.php">📖 View Books</a>
+    <a class="dashboard-btn" href="issue_book.php">📦 Issue Book</a>
+    <a class="dashboard-btn" href="return_book.php">📥 Return Book</a>
+    <a class="dashboard-btn" href="view_issued_books.php">📋 View Issued Logs</a>
+
+    <button onclick="toggleMode()" class="dark-toggle">🌓 Toggle Dark Mode</button>
 
     <footer>
-        &copy; <?= date('Y') ?> Library Management System. All rights reserved.
+        <p>&copy; 2025 Library Management System. All rights reserved.</p>
     </footer>
+
+    <script>
+        function toggleMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+    </script>
 
 </body>
 </html>
