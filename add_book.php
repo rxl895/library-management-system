@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 require 'config/db_config.php';
 
 $msg = "";
@@ -11,15 +14,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($title && $author && $genre) {
         $stmt = $conn->prepare("INSERT INTO books (title, author, genre) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $title, $author, $genre);
+        if ($stmt) {
+            $stmt->bind_param("sss", $title, $author, $genre);
 
-        if ($stmt->execute()) {
-            $msg = "✅ Book added successfully!";
+            if ($stmt->execute()) {
+                $msg = "✅ Book added successfully!";
+            } else {
+                $msg = "❌ Error executing statement: " . $stmt->error;
+            }
+
+            $stmt->close();
         } else {
-            $msg = "❌ Error: " . $conn->error;
+            $msg = "❌ Prepare failed: " . $conn->error;
         }
-
-        $stmt->close();
     } else {
         $msg = "⚠️ All fields are required.";
     }
@@ -31,11 +38,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Add Book</title>
     <style>
-        body { font-family: Arial, margin: 40px; }
-        form { max-width: 400px; margin: auto; }
-        label, input, select { display: block; width: 100%; margin-bottom: 10px; padding: 8px; }
-        input[type=submit] { background: #007bff; color: white; border: none; cursor: pointer; }
-        .msg { margin-top: 20px; text-align: center; color: green; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+        }
+        label, input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        input[type=text] {
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+        input[type=submit] {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        .msg {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: green;
+        }
+        .msg.error {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -54,7 +92,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 
     <?php if ($msg): ?>
-        <div class="msg"><?= htmlspecialchars($msg) ?></div>
+        <div class="msg <?= str_starts_with($msg, '❌') || str_starts_with($msg, '⚠️') ? 'error' : '' ?>">
+            <?= htmlspecialchars($msg) ?>
+        </div>
     <?php endif; ?>
 </body>
 </html>
