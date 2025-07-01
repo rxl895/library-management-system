@@ -80,7 +80,7 @@ if (!$result) {
     <h2>📚 Library Books</h2>
 
     <div class="search-bar">
-        <input type="text" placeholder="🔍 Search books (coming soon...)" disabled>
+        <input type="text" id="searchInput" placeholder="🔍 Search by title, author, or genre...">
     </div>
 
     <?php if ($result->num_rows > 0): ?>
@@ -107,5 +107,18 @@ if (!$result) {
     <?php else: ?>
         <p class="empty">No books added yet.</p>
     <?php endif; ?>
+
+    <script>
+        const searchInput = document.getElementById("searchInput");
+        searchInput.addEventListener("keyup", function () {
+            const filter = searchInput.value.toLowerCase();
+            const rows = document.querySelectorAll("table tbody tr");
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? "" : "none";
+            });
+        });
+    </script>
 </body>
 </html>
