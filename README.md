@@ -31,7 +31,10 @@ A full-stack PHP + MySQL web application to manage book inventory, student borro
 
 ## 📸 Screenshots
 
-> 📌 _Include screenshots like login, dashboard, view books, issue/return pages if available._
+> 📌 _Here are a few screenshots to give you a glimpse of the application:_
+
+### Dashboard
+![Dashboard showing book stats](screenshots/dashboard.png)
 
 ---
 
