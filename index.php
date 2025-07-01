@@ -4,6 +4,13 @@ if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit();
 }
+
+require 'config/db_config.php';
+
+// Stats Queries
+$totalBooks = $conn->query("SELECT COUNT(*) FROM books")->fetch_row()[0];
+$issuedBooks = $conn->query("SELECT COUNT(*) FROM issued_books WHERE returned = 0")->fetch_row()[0];
+$returnedBooks = $conn->query("SELECT COUNT(*) FROM issued_books WHERE returned = 1")->fetch_row()[0];
 ?>
 
 <!DOCTYPE html>
@@ -31,6 +38,16 @@ if (!isset($_SESSION['admin'])) {
         h2 {
             margin-top: 40px;
             font-size: 26px;
+        }
+
+        .stats {
+            margin: 20px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .stats p {
+            margin: 5px;
         }
 
         .dashboard-btn {
@@ -85,6 +102,10 @@ if (!isset($_SESSION['admin'])) {
             background-color: #222;
         }
 
+        .dark-mode .stats {
+            color: #ccc;
+        }
+
         .dark-toggle {
             background-color: #333;
             color: #fff;
@@ -107,6 +128,12 @@ if (!isset($_SESSION['admin'])) {
     </nav>
 
     <h2>📘 Library Management Dashboard</h2>
+
+    <div class="stats">
+        <p>📚 Total Books: <strong><?= $totalBooks ?></strong></p>
+        <p>📦 Currently Issued: <strong><?= $issuedBooks ?></strong></p>
+        <p>🔁 Returned: <strong><?= $returnedBooks ?></strong></p>
+    </div>
 
     <a class="dashboard-btn" href="add_book.php">➕ Add Book</a>
     <a class="dashboard-btn" href="view_books.php">📖 View Books</a>
