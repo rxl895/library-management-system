@@ -1,10 +1,19 @@
 <?php
+session_start();
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
+}
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 require 'config/db_config.php';
 
 $result = $conn->query("SELECT * FROM books ORDER BY added_on DESC");
+if (!$result) {
+    die("❌ SQL Error: " . $conn->error);
+}
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +28,17 @@ $result = $conn->query("SELECT * FROM books ORDER BY added_on DESC");
         }
         h2 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+        .search-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-bar input {
+            padding: 8px;
+            width: 60%;
+            max-width: 400px;
+            font-size: 16px;
         }
         table {
             width: 90%;
@@ -35,8 +54,11 @@ $result = $conn->query("SELECT * FROM books ORDER BY added_on DESC");
             background-color: #007bff;
             color: white;
         }
+        tr:nth-child(even) {
+            background-color: #f1f5ff;
+        }
         tr:hover {
-            background-color: #e8f0fe;
+            background-color: #d8ecff;
         }
         .empty {
             text-align: center;
@@ -44,27 +66,43 @@ $result = $conn->query("SELECT * FROM books ORDER BY added_on DESC");
             font-style: italic;
             color: #777;
         }
+        @media (max-width: 600px) {
+            table, th, td {
+                font-size: 14px;
+            }
+            .search-bar input {
+                width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
     <h2>📚 Library Books</h2>
 
-    <?php if ($result && $result->num_rows > 0): ?>
+    <div class="search-bar">
+        <input type="text" placeholder="🔍 Search books (coming soon...)" disabled>
+    </div>
+
+    <?php if ($result->num_rows > 0): ?>
         <table>
-            <tr>
-                <th>📖 Title</th>
-                <th>✍️ Author</th>
-                <th>🎯 Genre</th>
-                <th>🕓 Added On</th>
-            </tr>
-            <?php while ($row = $result->fetch_assoc()): ?>
+            <thead>
                 <tr>
-                    <td><?= htmlspecialchars($row['title']) ?></td>
-                    <td><?= htmlspecialchars($row['author']) ?></td>
-                    <td><?= htmlspecialchars($row['genre']) ?></td>
-                    <td><?= htmlspecialchars($row['added_on']) ?></td>
+                    <th>📖 Title</th>
+                    <th>✍️ Author</th>
+                    <th>🎯 Genre</th>
+                    <th>🕓 Added On</th>
                 </tr>
-            <?php endwhile; ?>
+            </thead>
+            <tbody>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($row['title']) ?></td>
+                        <td><?= htmlspecialchars($row['author']) ?></td>
+                        <td><?= htmlspecialchars($row['genre']) ?></td>
+                        <td><?= htmlspecialchars($row['added_on']) ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
         </table>
     <?php else: ?>
         <p class="empty">No books added yet.</p>
