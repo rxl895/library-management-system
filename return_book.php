@@ -1,4 +1,10 @@
 <?php
+session_start();
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
+}
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 require 'config/db_config.php';
@@ -10,15 +16,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $issue_id = $_POST['issue_id'];
 
     $stmt = $conn->prepare("UPDATE issued_books SET returned = 1, return_date = CURDATE() WHERE id = ?");
-    $stmt->bind_param("i", $issue_id);
-
-    if ($stmt->execute()) {
-        $msg = "✅ Book returned successfully!";
+    if ($stmt) {
+        $stmt->bind_param("i", $issue_id);
+        if ($stmt->execute()) {
+            $msg = "✅ Book returned successfully!";
+        } else {
+            $msg = "❌ Error: " . $stmt->error;
+        }
+        $stmt->close();
     } else {
-        $msg = "❌ Error: " . $conn->error;
+        $msg = "❌ Prepare failed: " . $conn->error;
     }
-
-    $stmt->close();
 }
 
 // Fetch unreturned books
@@ -35,15 +43,58 @@ $issued = $conn->query("
 <head>
     <title>Return Book</title>
     <style>
-        body { font-family: Arial; margin: 40px; }
-        form { max-width: 500px; margin: auto; }
-        label, select, input { display: block; width: 100%; margin-bottom: 10px; padding: 8px; }
-        input[type=submit] { background: #28a745; color: white; border: none; cursor: pointer; }
-        .msg { margin-top: 20px; text-align: center; color: green; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 40px;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        label, select, input {
+            display: block;
+            width: 100%;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        select, input[type=submit] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type=submit] {
+            background: #28a745;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        input[type=submit]:hover {
+            background: #218838;
+        }
+        .msg {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .msg.error {
+            color: red;
+        }
+        .msg.success {
+            color: green;
+        }
     </style>
 </head>
 <body>
     <h2>📘 Return a Book</h2>
+
     <form method="POST" action="">
         <label>Select Issued Book:</label>
         <select name="issue_id" required>
@@ -58,7 +109,9 @@ $issued = $conn->query("
     </form>
 
     <?php if ($msg): ?>
-        <div class="msg"><?= htmlspecialchars($msg) ?></div>
+        <div class="msg <?= str_starts_with($msg, '❌') ? 'error' : 'success' ?>">
+            <?= htmlspecialchars($msg) ?>
+        </div>
     <?php endif; ?>
 </body>
 </html>
