@@ -34,7 +34,29 @@ if (!$result) {
         }
         h2 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+        .top-bar {
+            width: 90%;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .top-bar input {
+            width: 60%;
+            max-width: 400px;
+            padding: 8px;
+            font-size: 16px;
+        }
+        .top-bar a {
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
         }
         table {
             width: 90%;
@@ -73,11 +95,23 @@ if (!$result) {
             table, th, td {
                 font-size: 13px;
             }
+            .top-bar {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .top-bar input {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <h2>📋 Issued Books Log</h2>
+
+    <div class="top-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Search title, student, or status...">
+        <a href="export_issued_logs.php">⬇️ Download CSV</a>
+    </div>
 
     <?php if ($result->num_rows > 0): ?>
         <table>
@@ -109,5 +143,19 @@ if (!$result) {
     <?php else: ?>
         <p class="empty">No issued books found.</p>
     <?php endif; ?>
+
+    <script>
+        const searchInput = document.getElementById("searchInput");
+
+        searchInput.addEventListener("keyup", function () {
+            const filter = searchInput.value.toLowerCase();
+            const rows = document.querySelectorAll("table tbody tr");
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? "" : "none";
+            });
+        });
+    </script>
 </body>
 </html>
