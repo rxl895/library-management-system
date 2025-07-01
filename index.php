@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,10 +21,11 @@
 
         nav {
             background-color: #007bff;
-            padding: 12px 0;
+            padding: 12px 20px;
             color: white;
             font-size: 20px;
             font-weight: bold;
+            text-align: left;
         }
 
         h2 {
@@ -42,6 +51,17 @@
         .dashboard-btn:hover {
             background-color: #0056b3;
             transform: scale(1.03);
+        }
+
+        .logout-btn {
+            margin-top: 20px;
+            background-color: crimson;
+            padding: 10px 20px;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
         }
 
         footer {
@@ -95,6 +115,10 @@
     <a class="dashboard-btn" href="view_issued_books.php">📋 View Issued Logs</a>
 
     <button onclick="toggleMode()" class="dark-toggle">🌓 Toggle Dark Mode</button>
+
+    <form action="logout.php" method="POST">
+        <button type="submit" class="logout-btn">🔓 Logout</button>
+    </form>
 
     <footer>
         <p>&copy; 2025 Library Management System. All rights reserved.</p>
